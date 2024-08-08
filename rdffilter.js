@@ -44,18 +44,18 @@ class RDFFilter extends Transform {
 
 // TODO: try https://www.npmjs.com/package/async-transforms for parallel?
 
-export function rdffilter(input, output, { from, to, filter }) {
-  const parser = new N3.StreamParser({ format: from })
+export function rdffilter(input, output, { from, to, filter } = {}) {
+  const parser = new N3.StreamParser({ format: from || "turtle" })
 
   // TODO: prefixes for nice output?
-  const writer = new N3.StreamWriter({ format: to })
+  const writer = new N3.StreamWriter({ format: to || "nt" })
 
   filter = new RDFFilter(filter ?? (() => true))
 
   // TODO: pass errors to caller
   parser.on('error', error)
 
-  input.pipe(parser)
+  return input.pipe(parser)
     .pipe(filter)
     .pipe(writer)
     .pipe(output)

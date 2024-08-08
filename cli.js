@@ -50,8 +50,8 @@ program
   .action(async (input, { output, from, to, module }) => {
      input ||= '-'
      output ||= '-'
-     from = getFormat(input, from, "input") || 'turtle'
-     to = getFormat(output, to, "output") || 'nt'
+     from = getFormat(input, from, "input")
+     to = getFormat(output, to, "output")
      input = input === '-' ? process.stdin : fs.createReadStream(input)
      output = output === '-' ? process.stdout : fs.createWriteStream(output)
      input.on('error', error)

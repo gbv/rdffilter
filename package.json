@@ -3,12 +3,12 @@
   "version": "0.1.0",
   "description": "Parse and filter RDF data for cleanup and expansion",
   "type": "module",
-  "main": "cli.js",
+  "main": "rdffilter.js",
   "bin": {
     "rdffilter": "./cli.js"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha"
   },
   "repository": {
     "type": "git",
@@ -26,5 +26,9 @@
   "dependencies": {
     "commander": "^12.1.0",
     "n3": "^1.20.4"
+  },
+  "devDependencies": {
+    "chai": "^5.1.1",
+    "mocha": "^10.7.0"
   }
 }
