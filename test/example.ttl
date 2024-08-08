@@ -1,0 +1,5 @@
+@prefix ex: <http://example.org/> .
+
+<> a ex:root .
+ex:a a ex:b .
+_:blank a ex:foo .

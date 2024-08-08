@@ -1,0 +1,30 @@
+{
+  "name": "rdffilter",
+  "version": "0.1.0",
+  "description": "Parse and filter RDF data for cleanup and expansion",
+  "type": "module",
+  "main": "cli.js",
+  "bin": {
+    "rdffilter": "./cli.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gbv/rdffilter.git"
+  },
+  "keywords": [
+    "rdf"
+  ],
+  "author": "Jakob Voß <voss@gbv.de>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/gbv/rdffilter/issues"
+  },
+  "homepage": "https://github.com/gbv/rdffilter#readme",
+  "dependencies": {
+    "commander": "^12.1.0",
+    "n3": "^1.20.4"
+  }
+}
