@@ -66,9 +66,17 @@ program
   .option("-o, --output <file>", "RDF output file","-")
   .option("-m, --module <name>", "filter module name or local .js/.mjs file")
   .option("-l, --list", "list module names and quit")
+  .option("-k, --kept", "emit kept quads")
+  .option("-a, --added", "emit added quads")
+  .option("-r, --removed", "emit removed quads")
   .option("-s, --stats", "print statistics at the end")
   .action(async (input, options) => {
     var { output, from, to, module, stats } = options
+
+    const select = options.kept || options.added || options.removed
+    const kept = select ? !!options.kept : true
+    const added = select ? !!options.added : true
+    const removed = select ? !!options.removed : false
 
     if (options.list) {
       listModules()
@@ -86,7 +94,7 @@ program
 
     // TODO: support multiple filter modules
     const filter = module ? await filterFromModule(module) : undefined
-    rdffilter(input, output, { from, to, filter, stats })
+    rdffilter(input, output, { from, to, filter, stats, added, kept, removed })
   })
 
 program.parse(process.argv)

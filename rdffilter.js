@@ -26,51 +26,85 @@ class RDFFilter extends Transform {
   constructor(filter, options={}) {
     super({
       objectMode: true,
-      transform(quad, _, callback) {
-        if (this.stats) {this.stats.quads++}
+      transform(quad, _, callback) {        
+        this.stats.quads++
+          
         var result = filter(quad)
         if (result === true) {
-          this.push(quad)
+          this.keep(quad)
         } else if (Array.isArray(result)) {
-          if (this.stats) {            
+          if (!result.length) {
+            this.remove(quad)
+          } else {
             if (quad.equals(result[0])) {
-              this.stats.added += result.length - 1
-            } else {
-              this.stats.removed++
-              this.stats.added += result.length
+              this.keep(quad)
+              result.shift()
             }
-          }
-          for (let q of result) {
-            this.push(q)
+            for (let q of result) {
+              this.add(q)
+            }
           }
         } else if (typeof result === "object") {
-          if (this.stats) {
-            if (!quad.equals(result[0])) {
-              this.stats.removed++
-              this.stats.added++
-            }
+          if (quad.equals(result[0])) {
+            this.keep(quad)
+          } else {
+            this.remove(quad)
+            this.add(result)
           }
-          this.push(result)
-        } else if (this.stats) {
-          this.stats.removed++
+        } else {
+          this.remove(quad)
         }
         callback(null)
       },
     })
-    this.stats = options.stats ? { quads: 0, removed: 0, added: 0 } : null
+
+    this.stats = { quads: 0, kept: 0, removed: 0, added: 0 }
+    this.pass = {
+      added: options.added ?? true,
+      kept: options.kept ?? true,
+      removed: options.removed ?? false,
+    }
+  }
+
+  keep(quad) {
+    if (this.pass.kept) {
+      this.push(quad)
+      this.stats.kept++
+    }
+  }
+
+  remove(quad) {
+    if (this.pass.removed) {
+      this.push(quad)
+    } else {
+      this.stats.removed++
+    }
+  }
+
+  add(quad) {
+    if (this.pass.added) {
+      this.push(quad)
+      this.stats.added++
+    }
   }
 }    
 
 
 // TODO: try https://www.npmjs.com/package/async-transforms for parallel?
 
-export function rdffilter(input, output, { from, to, filter, stats } = {}) {
+export function rdffilter(input, output, options = {}) {
+  if (!("kept" in options)) {options.kept = true}
+  if (!("added" in options)) {options.added = true}
+  if (!("removed" in options)) {options.removed = false}
+
+  var { from, to, filter, stats, ...filterOptions } = options
+
   const parser = new N3.StreamParser({ format: from || "turtle" })
 
   // TODO: prefixes for nice output?
   const writer = new N3.StreamWriter({ format: to || "nt" })
 
-  filter = new RDFFilter(filter ?? (() => true), { stats })
+  filter = new RDFFilter(filter ?? (() => true), filterOptions)
 
   // TODO: pass errors to caller
   parser.on("error", error)

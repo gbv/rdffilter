@@ -57,11 +57,16 @@ Options:
   -f, --from <format>  input RDF format (default from file name or turtle)
   -t, --to <format>    output RDF format (default from file name or nt)
   -o, --output <file>  RDF output file (default: "-")
-  -m, --module <name>  filter module name or .js/.mjs file
+  -m, --module <name>  filter module name or local .js/.mjs file
   -l, --list           list module names and quit
+  -k, --kept           emit kept quads
+  -a, --added          emit added quads
+  -r, --removed        emit removed quads
   -s, --stats          print statistics at the end
   -h, --help           display help for command
 ~~~
+
+If none of option `-k`, `-a`, `-r` is given, the combination `-k -a` is used as default (emit kept and added quads).
 
 ## API
 
