@@ -1,5 +1,5 @@
-import N3 from 'n3'
-import { Transform }  from 'stream'
+import N3 from "n3"
+import { Transform }  from "stream"
 
 function error(msg, code=1) {
   console.error(`${msg}`)
@@ -7,18 +7,18 @@ function error(msg, code=1) {
 }
 
 export const formats = {
-  json: 'application/ld+json',
-  jsonld: 'application/ld+json',
-  'json-ld': 'application/ld+json',
-  n3: 'text/n3',
-  nq: 'application/n-quads',
-  nt: 'application/n-triples',
-  owl: 'application/rdf+xml',
-  rdf: 'application/rdf+xml',
-  trig: 'application/trig',
-  ttl: 'text/turtle',
-  turtle: 'text/turtle',
-  xml: 'application/rdf+xml',
+  json: "application/ld+json",
+  jsonld: "application/ld+json",
+  "json-ld": "application/ld+json",
+  n3: "text/n3",
+  nq: "application/n-quads",
+  nt: "application/n-triples",
+  owl: "application/rdf+xml",
+  rdf: "application/rdf+xml",
+  trig: "application/trig",
+  ttl: "text/turtle",
+  turtle: "text/turtle",
+  xml: "application/rdf+xml",
 }
 
 
@@ -33,10 +33,10 @@ class RDFFilter extends Transform {
         } else if (result instanceof N3.Quad) {
           this.push(result)     // replace        
         } else if (Array.isArray(result)) {
-          for (let q of result) this.push(q)
+          for (let q of result) {this.push(q)}
         }
         callback(null)
-      }
+      },
     })
   }
 }    
@@ -53,7 +53,7 @@ export function rdffilter(input, output, { from, to, filter } = {}) {
   filter = new RDFFilter(filter ?? (() => true))
 
   // TODO: pass errors to caller
-  parser.on('error', error)
+  parser.on("error", error)
 
   return input.pipe(parser)
     .pipe(filter)
