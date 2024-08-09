@@ -58,6 +58,7 @@ Options:
   -t, --to <format>    output RDF format (default from file name or nt)
   -o, --output <file>  RDF output file (default: "-")
   -m, --module <name>  filter module name or .js/.mjs file
+  -l, --list           list module names and quit
   -s, --stats          print statistics at the end
   -h, --help           display help for command
 ~~~
