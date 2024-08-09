@@ -2,8 +2,8 @@
 
 > Parse and filter RDF data for cleanup and expansion
 
-[![Test](https://github.com/pg-format/pgraphs/actions/workflows/test.yml/badge.svg)](https://github.com/pg-format/pgraphs/actions/workflows/test.yml)
-[![NPM Version](http://img.shields.io/npm/v/pgraphs.svg?style=flat)](https://www.npmjs.org/package/pgraphs)
+[![Test](https://github.com/gbv/rdffilter/actions/workflows/test.yml/badge.svg)](https://github.com/gbv/rdffilter/actions/workflows/test.yml)
+[![NPM Version](http://img.shields.io/npm/v/rdffilter.svg?style=flat)](https://www.npmjs.org/package/rdffilter)
 
 The package and its command line script ensures that RDF is syntactically valid and can be used to filter out, rewrite or expand individual triples.
 
