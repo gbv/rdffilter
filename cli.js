@@ -56,7 +56,8 @@ program
   .option("-t, --to <format>", "output RDF format (default from file name or nt)")
   .option("-o, --output <file>", "RDF output file","-")
   .option("-m, --module <name>", "filter module name or .js/.mjs file")
-  .action(async (input, { output, from, to, module }) => {
+  .option("-s, --stats", "print statistics at the end")
+  .action(async (input, { output, from, to, module, stats }) => {
     input ||= "-"
     output ||= "-"
     from = getFormat(input, from, "input")
@@ -68,7 +69,7 @@ program
 
     // TODO: support multiple filter modules
     const filter = module ? await filterFromModule(module) : undefined
-    rdffilter(input, output, { from, to, filter })
+    rdffilter(input, output, { from, to, filter, stats })
   })
 
 program.parse(process.argv)

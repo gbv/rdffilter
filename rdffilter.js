@@ -23,40 +23,67 @@ export const formats = {
 
 
 class RDFFilter extends Transform {
-  constructor(filter) {
+  constructor(filter, options={}) {
     super({
       objectMode: true,
       transform(quad, _, callback) {
+        if (this.stats) {this.stats.quads++}
         var result = filter(quad)
         if (result === true) {
-          this.push(quad)       // keep
-        } else if (result instanceof N3.Quad) {
-          this.push(result)     // replace        
+          this.push(quad)
         } else if (Array.isArray(result)) {
-          for (let q of result) {this.push(q)}
+          if (this.stats) {            
+            if (quad.equals(result[0])) {
+              this.stats.added += result.length - 1
+            } else {
+              this.stats.removed++
+              this.stats.added += result.length
+            }
+          }
+          for (let q of result) {
+            this.push(q)
+          }
+        } else if (typeof result === "object") {
+          if (this.stats) {
+            if (!quad.equals(result[0])) {
+              this.stats.removed++
+              this.stats.added++
+            }
+          }
+          this.push(result)
+        } else if (this.stats) {
+          this.stats.removed++
         }
         callback(null)
       },
     })
+    this.stats = options.stats ? { quads: 0, removed: 0, added: 0 } : null
   }
 }    
 
 
 // TODO: try https://www.npmjs.com/package/async-transforms for parallel?
 
-export function rdffilter(input, output, { from, to, filter } = {}) {
+export function rdffilter(input, output, { from, to, filter, stats } = {}) {
   const parser = new N3.StreamParser({ format: from || "turtle" })
 
   // TODO: prefixes for nice output?
   const writer = new N3.StreamWriter({ format: to || "nt" })
 
-  filter = new RDFFilter(filter ?? (() => true))
+  filter = new RDFFilter(filter ?? (() => true), { stats })
 
   // TODO: pass errors to caller
   parser.on("error", error)
+
+  writer.on("finish", () => {
+    if (stats) {
+      console.log(JSON.stringify(filter.stats))
+    }
+  })
 
   return input.pipe(parser)
     .pipe(filter)
     .pipe(writer)
     .pipe(output)
+
 }

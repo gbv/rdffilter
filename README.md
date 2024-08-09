@@ -58,6 +58,7 @@ Options:
   -t, --to <format>    output RDF format (default from file name or nt)
   -o, --output <file>  RDF output file (default: "-")
   -m, --module <name>  filter module name or .js/.mjs file
+  -s, --stats          print statistics at the end
   -h, --help           display help for command
 ~~~
 
@@ -78,7 +79,12 @@ export default ({subject, predicate, object}) => {
 Filter modules can either be referenced by filename or by name of a file in the [modules directory](modules) of this package. Please have a look at the latter for examples of filter modules. A filter function can return:
 
 - `true` to keep the triple
-- an object or an array of objects to replace the triple
+
+- an object or an array of objects to replace the triple.  To add triples *in
+  addition to* the original triple, return an array with the original triple *as
+  first element* (otherwise the original triple will not be counted as kept but as
+  removed and added).
+
 - any falsy value (`false`, `undefined`, `null`) to filter out the triple
 
 Returned objects are expected to conform to RDF/JS Quad Interface. This package uses [N3](https://www.npmjs.com/package/n3) so you can use its factory methods. A slightly more complex example below:
@@ -95,6 +101,7 @@ export default ({ subject, predicate, object }) => {
   return true
 }
 ~~~
+
 
 ## See Also
 

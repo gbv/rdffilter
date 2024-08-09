@@ -1,5 +1,6 @@
 @prefix ex: <http://example.org/> .
+@prefix dc: <http://purl.org/dc/elements/1.1/> .
 
 <> a ex:root .
 ex:a a ex:b .
-_:blank a ex:foo .
+_:blank dc:xxx "test" .
