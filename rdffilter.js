@@ -7,20 +7,13 @@ function error(msg, code=1) {
 }
 
 export const formats = {
-  json: "application/ld+json",
-  jsonld: "application/ld+json",
-  "json-ld": "application/ld+json",
   n3: "text/n3",
   nq: "application/n-quads",
-  nt: "application/n-triples",
-  owl: "application/rdf+xml",
-  rdf: "application/rdf+xml",
+  nt: "N-Triples",
   trig: "application/trig",
   ttl: "text/turtle",
   turtle: "text/turtle",
-  xml: "application/rdf+xml",
 }
-
 
 class RDFFilter extends Transform {
   constructor(filter, options={}) {
@@ -99,10 +92,13 @@ export function rdffilter(input, output, options = {}) {
 
   var { from, to, filter, stats, ...filterOptions } = options
 
-  const parser = new N3.StreamParser({ format: from || "turtle" })
+  var format = from ? formats[from] : "turtle" 
+  const parser = new N3.StreamParser({ format })
 
   // TODO: prefixes for nice output?
-  const writer = new N3.StreamWriter({ format: to || "nt" })
+  // TODO: make sure output is valid, see https://github.com/rdfjs/N3.js/issues/383#issuecomment-2282261922
+  format = to ? formats[to] : "N-Triples" 
+  const writer = new N3.StreamWriter({ format })
 
   filter = new RDFFilter(filter ?? (() => true), filterOptions)
 
