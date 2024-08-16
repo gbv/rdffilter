@@ -1,5 +1,6 @@
 import N3 from "n3"
 import { RDFFilterTransformer } from "./src/transformer.js"
+import { filterPipeline } from "./src/blocks.js"
 
 function error(msg, code=1) {
   console.error(`${msg}`)
@@ -32,19 +33,29 @@ export function rdffilter(input, output, options = {}) {
   format = to ? formats[to] : "N-Triples" 
   const writer = new N3.StreamWriter({ format })
 
-  filter = new RDFFilterTransformer(filter ?? (() => true), filterOptions)
+  var combinedFilter
+  if (typeof filter == "function") {
+    combinedFilter = filter
+  } else if (filter.length == 0) { 
+    combinedFilter = () => true
+  } else if (filter.length == 1) {
+    combinedFilter = filter[0]
+  } else {
+    combinedFilter = filterPipeline(filter)
+  }
+  const streamFilter = new RDFFilterTransformer(combinedFilter, filterOptions)
 
   // TODO: pass errors to caller
   parser.on("error", error)
 
   writer.on("finish", () => {
     if (stats) {
-      console.log(JSON.stringify(filter.stats))
+      console.log(JSON.stringify(streamFilter.stats))
     }
   })
 
   return input.pipe(parser)
-    .pipe(filter)
+    .pipe(streamFilter)
     .pipe(writer)
     .pipe(output)
 

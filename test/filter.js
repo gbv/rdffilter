@@ -3,6 +3,7 @@ import fs from "fs"
 import { rdffilter } from "../rdffilter.js"
 import { Writable } from "stream"
 import { BlankNode } from "n3"
+import { Quad } from "n3"
 
 import dctFilter from "../modules/dct.js"
 
@@ -39,7 +40,17 @@ describe("rdffilter", () => {
 _:b1_blank <http://purl.org/dc/xxx> "test".
 `
     // TODO: test STDOUT is `{"quads":3,"removed":1,"added":1}`
-    // TODO: test multiple filters
     testResult("./test/example.ttl", { to: "turtle", filter: dctFilter, stats: true }, expect, done)
   })
+})
+
+describe("filterPipeline", () => {
+  it("multiple filters", done => {
+    const expect = "_:b2_blank <http://purl.org/dc/elements/1.1/xxx> _:b2_blank .\n"
+    var filter = [
+      (q => q.subject.termType == "BlankNode"),
+      ({subject, predicate}) => new Quad(subject, predicate, subject),
+    ]
+    testResult("./test/example.ttl", { filter }, expect, done)
+  })  
 })

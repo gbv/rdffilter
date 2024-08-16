@@ -3,7 +3,6 @@ import { Transform }  from "stream"
 export class RDFFilterTransformer extends Transform {
   constructor(filter, options={}) {
     super({ objectMode: true })
-
     this.filter = filter
     this.stats = { quads: 0, kept: 0, removed: 0, added: 0 }
     this.pass = {

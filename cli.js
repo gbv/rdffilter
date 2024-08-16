@@ -56,6 +56,8 @@ async function filterFromModule(module) {
   }
 }
 
+const collect = (value, previous) => previous.concat([value])
+
 program.name(pkg.name)
 program.description(pkg.description)
 program.version(pkg.version)
@@ -64,7 +66,7 @@ program
   .option("-f, --from <format>", "input RDF format (default from file name or turtle)")
   .option("-t, --to <format>", "output RDF format (default from file name or nt)")
   .option("-o, --output <file>", "RDF output file","-")
-  .option("-m, --module <name>", "filter module name or local .js/.mjs file")
+  .option("-m, --module <name>", "filter module name or local .js/.mjs file", collect, [])
   .option("-l, --list", "list module names and quit")
   .option("-k, --kept", "emit kept quads")
   .option("-a, --added", "emit added quads")
@@ -92,8 +94,7 @@ program
     input.on("error", error)
     output.on("error", error)
 
-    // TODO: support multiple filter modules
-    const filter = module ? await filterFromModule(module) : undefined
+    const filter = await Promise.all(module.map(m => filterFromModule(m)))
     rdffilter(input, output, { from, to, filter, stats, added, kept, removed })
   })
 
