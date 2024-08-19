@@ -1,6 +1,6 @@
 {
   "name": "rdffilter",
-  "version": "0.2.2",
+  "version": "0.3.0",
   "description": "Parse and filter RDF data for cleanup and expansion",
   "type": "module",
   "main": "index.js",
