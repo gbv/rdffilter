@@ -1,6 +1,6 @@
 import N3 from "n3"
-import { RDFFilterTransformer } from "./src/transformer.js"
-import { filterPipeline } from "./src/blocks.js"
+import { RDFFilterTransformer } from "./transformer.js"
+import { filterPipeline } from "./blocks.js"
 
 function error(msg, code=1) {
   console.error(`${msg}`)

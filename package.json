@@ -3,7 +3,7 @@
   "version": "0.2.2",
   "description": "Parse and filter RDF data for cleanup and expansion",
   "type": "module",
-  "main": "rdffilter.js",
+  "main": "index.js",
   "bin": {
     "rdffilter": "./cli.js"
   },

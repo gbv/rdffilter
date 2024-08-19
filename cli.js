@@ -9,7 +9,7 @@ const pkg = await fs.readFileSync(pkgFile("package.json"))
 
 import { program } from "commander"
 
-import { rdffilter, formats } from "./rdffilter.js"
+import { rdffilter, formats } from "./index.js"
 
 function error(msg, code=1) {
   console.error(`${msg}`)

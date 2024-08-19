@@ -1,6 +1,6 @@
 import { assert } from "chai"
 import fs from "fs"
-import { rdffilter } from "../rdffilter.js"
+import { rdffilter } from "../index.js"
 import { Writable } from "stream"
 import { BlankNode } from "n3"
 import { Quad } from "n3"
