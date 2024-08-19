@@ -9,7 +9,7 @@ const pkg = await fs.readFileSync(pkgFile("package.json"))
 
 import { program } from "commander"
 
-import { rdffilter, formats } from "./index.js"
+import { rdffilter } from "./index.js"
 
 function error(msg, code=1) {
   console.error(`${msg}`)
@@ -23,12 +23,6 @@ function listModules() {
     const comment = fs.readFileSync(pkgFile(`modules/${name}`)).toString().split("\n")[0]
     console.log(name.slice(0,-3) + " ".repeat(len - name.length), comment)
   }
-}
-
-function getFormat(file, format, type) {
-  format ||= file.split(".").slice(1)[0]
-  if (format && !(format in formats)) {error(`${type} format ${format} not supported!`)}
-  return format
 }
 
 async function loadModule(module) {
@@ -63,39 +57,52 @@ program.description(pkg.description)
 program.version(pkg.version)
 program
   .argument("[input]", "RDF input file (default: - for stdin)")
-  .option("-f, --from <format>", "input RDF format (default from file name or turtle)")
+  .option("-f, --filter <name>", "filter module name or local .js/.mjs file", collect, [])
+  .option("-q, --quads", "process quads (read TriG, write N-Quads)")
   .option("-t, --to <format>", "output RDF format (default from file name or nt)")
   .option("-o, --output <file>", "RDF output file","-")
-  .option("-m, --module <name>", "filter module name or local .js/.mjs file", collect, [])
-  .option("-l, --list", "list module names and quit")
+  .option("-l, --list", "list filter module names and quit")
   .option("-k, --kept", "emit kept quads")
   .option("-a, --added", "emit added quads")
   .option("-r, --removed", "emit removed quads")
   .option("-s, --stats", "print statistics at the end")
   .action(async (input, options) => {
-    var { output, from, to, module, stats } = options
+    if (options.list) {
+      listModules()
+      process.exit(0)
+    }
 
     const select = options.kept || options.added || options.removed
     const kept = select ? !!options.kept : true
     const added = select ? !!options.added : true
     const removed = select ? !!options.removed : false
 
-    if (options.list) {
-      listModules()
-      process.exit(0)
-    }
+    var { output, quads, to, filter, stats } = options
 
     input ||= "-"
     output ||= "-"
-    from = getFormat(input, from, "input")
-    to = getFormat(output, to, "output")
+
+    // input/output format
+    const from = input.split(".").slice(1)[0]
+    if (from == "nq" || from == "trig") { quads = true }
+
+    to ||= output.split(".").slice(1)[0] || (quads ? "nq" : "nt")
+    if (to == "nq" || to == "trig") { quads = true }
+    if (!to.match(/^(ttl|turtle|nt|nq|trig)$/)) {
+      error(`output format ${to} not supported!`)
+    } else if (quads && to !== "nq" && to !== "trig") {
+      error(`output format ${to} does not support named graphs, use nq or trig format!`)
+    }
+
+    // input/output stream
     input = input === "-" ? process.stdin : fs.createReadStream(input)
     output = output === "-" ? process.stdout : fs.createWriteStream(output)
     input.on("error", error)
     output.on("error", error)
 
-    const filter = await Promise.all(module.map(m => filterFromModule(m)))
-    rdffilter(input, output, { from, to, filter, stats, added, kept, removed })
+    filter = await Promise.all(filter.map(m => filterFromModule(m)))
+
+    rdffilter(input, output, { quads, to, filter, stats, added, kept, removed })
   })
 
 program.parse(process.argv)

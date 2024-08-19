@@ -13,7 +13,7 @@ The package and its command line script ensures that RDF is syntactically valid 
 - [Install](#install)
 - [Usage](#usage)
 - [API](#api)
-- [Modules](#modules)
+- [Filters](#filters)
 - [See Also](#see-also)
 - [License](#license)
 
@@ -27,7 +27,9 @@ The best part of RDF, next to IRIs, is triples can always be combined. The worst
 
 Despite the availability of complicated technologies to ensure data quality, such as [Web Ontology Language (OWL)](https://www.w3.org/TR/owl2-overview/) and [Shapes Constraint Language (SHACL)](https://www.w3.org/TR/shacl/), people keep creating malformed, invalid, faulty or nonsensical RDF data in good faith. Contrary to popular belief, RDF data is not more "semantic" than scribbled shopping lists, Excel sheets, or any other kind of data -- unless the data follows some assumptions. This tool can help to check some of these assumptions and to modify RDF data to better meet defined expections.
 
-Cavehat: this tool processes RDF data one triple each, so only simple kinds of patterns can be detected and processed. Please use an RDF inference engine or validation processor for more complex rules!
+Cavehat: this tool processes RDF data one triple or quad each, so only simple
+kinds of patterns can be detected and processed. Please use an RDF inference
+engine or validation processor for more complex rules!
 
 ## Install
 
@@ -45,7 +47,14 @@ npm i rdffilter
 
 ## Usage
 
-By default the command line client reads RDF Turtle syntax and writes NTriples. To enable triple filtering use option `-m` to specify [filter modules](#modules).
+By default the command line client reads RDF Turtle syntax and writes
+N-Triples. With option `--quads` or if input file extension is `.nq` or
+`.trig`, the formats are changed to TriG and N-Quads, respectively. The output
+format can also be set explicitly with option `--to` for Turtle
+(`ttl`/`turtle`), N-Triples (`nt`), N-Quads (`nq`) or TriG (`trig`). RDF
+extension RDF-star is not supported.
+
+To enable triple filtering use option `-f` to specify [filters](#filters).
 
 ~~~
 Usage: rdffilter [options] [input]
@@ -54,10 +63,10 @@ Arguments:
   input                RDF input file (default: - for stdin)
 
 Options:
-  -f, --from <format>  input RDF format (default from file name or turtle) 
+  -f, --filter <name>  filter module name or local .js/.mjs file
   -t, --to <format>    output RDF format (default from file name or nt)
   -o, --output <file>  RDF output file (default: "-")
-  -m, --module <name>  filter module name or local .js/.mjs file
+  -q, --quads          expect quads (read TriG, write N-Quads)
   -l, --list           list module names and quit
   -k, --kept           emit kept quads
   -a, --added          emit added quads
@@ -68,13 +77,17 @@ Options:
 
 If none of option `-k`, `-a`, `-r` is given, the combination `-k -a` is used as default (emit kept and added quads).
 
-Supported input and output formats are limited to Turtle (`ttl`/`turtle`), N-Triples (`nt`), N-Quads (`nq`) and TriG (`trig`).
-
 ## API
 
 This node package can also be used as programming library but the API has not been fixed yet. Please consult the source code.
 
-## Modules
+The following functions can be exported:
+
+- rdffilter
+- applyFilter
+- filterPipeline
+
+## Filters
 
 A filter module is a JavaScript file that exports a filter function. The function gets an RDF Triple or Quad object that implements the [RDF/JS Quad Interface](https://rdf.js.org/data-model-spec/#quad-interface). The following example module filters out statements with blank nodes:
 

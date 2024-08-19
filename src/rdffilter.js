@@ -22,14 +22,13 @@ export function rdffilter(input, output, options = {}) {
   if (!("added" in options)) {options.added = true}
   if (!("removed" in options)) {options.removed = false}
 
-  var { from, to, filter, stats, ...filterOptions } = options
+  var { to, filter, stats, ...filterOptions } = options
 
-  var format = from ? formats[from] : "turtle" 
-  const parser = new N3.StreamParser({ format })
+  const parser = new N3.StreamParser()
 
   // TODO: Add prefixes for nice output?
   // TODO: make sure output is valid, see https://github.com/rdfjs/N3.js/issues/383#issuecomment-2282261922
-  format = to ? formats[to] : "N-Triples" 
+  const format = to ? formats[to] : "N-Triples" 
   const writer = new N3.StreamWriter({ format })
 
   var combinedFilter
@@ -57,5 +56,4 @@ export function rdffilter(input, output, options = {}) {
     .pipe(streamFilter)
     .pipe(writer)
     .pipe(output)
-
 }
