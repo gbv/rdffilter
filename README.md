@@ -68,7 +68,7 @@ Options:
 
 If none of option `-k`, `-a`, `-r` is given, the combination `-k -a` is used as default (emit kept and added quads).
 
-Supported input and output formats are limited to Turtle (`ttl`/`turtle`), N-Triples (`nt`), N-Quads (`nq`), TriG (`trig`), and Notation3 (`n3`).
+Supported input and output formats are limited to Turtle (`ttl`/`turtle`), N-Triples (`nt`), N-Quads (`nq`) and TriG (`trig`).
 
 ## API
 

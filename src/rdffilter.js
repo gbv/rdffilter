@@ -8,7 +8,6 @@ function error(msg, code=1) {
 }
 
 export const formats = {
-  n3: "text/n3",
   nq: "application/n-quads",
   nt: "N-Triples",
   trig: "application/trig",
