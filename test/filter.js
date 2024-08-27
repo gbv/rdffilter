@@ -3,7 +3,7 @@ import fs from "fs"
 import { rdffilter } from "../index.js"
 import { Writable } from "stream"
 import { BlankNode } from "n3"
-import { Quad } from "n3"
+import { IRIFilter, dataFactory as RDF } from "../index.js"
 
 import dctFilter from "../modules/dct.js"
 
@@ -49,8 +49,24 @@ describe("filterPipeline", () => {
     const expect = "_:b2_blank <http://purl.org/dc/elements/1.1/xxx> _:b2_blank .\n"
     var filter = [
       (q => q.subject.termType == "BlankNode"),
-      ({subject, predicate}) => new Quad(subject, predicate, subject),
+      ({subject, predicate}) => RDF.quad(subject, predicate, subject),
     ]
     testResult("./test/example.ttl", { filter }, expect, done)
   })  
+})
+
+describe("IRIFilter", () => {
+  const tests = {
+    "<x:a> <x:b> <x:c>": {},
+    "<x:a1> <x:b1> <x:c1>": { action: n => RDF.namedNode(n.value+1) },
+    "<x:a> <x:b1> <x:c>": { action: n => RDF.namedNode(n.value+1), range: new Set(["predicate"]) },
+  }
+  for (let expect in tests) {
+    it(expect, done => {
+      const rf = new IRIFilter(tests[expect])
+      //const filter = rf.filterQuad.bind(rf)
+      const filter = rf
+      testResult("./test/abc.ttl", { filter }, expect + " .\n", done)
+    })
+  }
 })

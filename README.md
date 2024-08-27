@@ -109,6 +109,19 @@ const triple = RDF.triple(
 )
 ~~~
 
+### IRIFilter
+
+Instances of this class are callable filter functions that pass NamedNode terms (IRIs) to an `action` method to either return a modified term or a non-truthy value to not modify the term. Option `range` can be set to a set telling which terms to check (`new Set(["subject","predicate","object"])` by default).
+
+To give an example, the following filter only keeps statements with `rdf:type` predicate.
+
+~~~js
+new IRIFilter({
+  range: new Set(["predicate"]),
+  action: term => term.value === "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+})
+~~~
+
 ## Filters
 
 A filter module is a JavaScript file that exports a filter function. The function gets an RDF Triple or Quad object that implements the [RDF/JS Quad Interface](https://rdf.js.org/data-model-spec/#quad-interface). The following example module filters out statements with blank nodes:
