@@ -83,9 +83,31 @@ This node package can also be used as programming library but the API has not be
 
 The following functions can be exported:
 
-- rdffilter
-- applyFilter
-- filterPipeline
+### rdffilter
+
+...
+
+### applFilter
+
+...
+
+### filterPipeline
+
+...
+
+### dataFactory
+
+Implements the [RDF/JS DataFactory interface](https://rdf.js.org/data-model-spec/#datafactory-interface) to create RDF Terms:
+
+~~~js
+import { dataFactory as RDF } from "rdffilter"
+
+const triple = RDF.triple(
+  RDF.blankNode(),
+  RDF.namedNode("http://www.w3.org/2000/01/rdf-schema#label"),
+  RDF.literal("Hello, World!", "en")
+)
+~~~
 
 ## Filters
 
@@ -112,12 +134,12 @@ Returned objects are expected to conform to RDF/JS Quad Interface. This package 
 
 ~~~js
 // Replace Dublin Core Element Set predicate URIs with DC Terms URIs
-import { Quad, NamedNode } from "n3"
+import { dataFactory as RDF } from "rdffilter"
 
 export default ({ subject, predicate, object }) => {
   if (predicate.termType === "NamedNode" && predicate.value.startsWith("http://purl.org/dc/elements/1.1/")) {
     const uri = predicate.value.replace("http://purl.org/dc/elements/1.1/","http://purl.org/dc/")
-    return new Quad(subject, new NamedNode(uri), object)
+    return RDF.quad(subject, RDF.namedNode(uri), object)
   }
   return true
 }

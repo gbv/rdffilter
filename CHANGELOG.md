@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.1
+
+Export RDF/JS DataFactory `dataFactory`
+
 ## 0.3.0
 
 Remove option `--from`. Rename option `--module` to `--filter`. Add option `--quads`.
