@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.4.0
+
+- Add `iriFilter` instead of `IRIFilter`
+- Add `namespaceFilter`
+- Change helper functions
+
 ## 0.3.1
 
 - Export RDF/JS DataFactory `dataFactory`

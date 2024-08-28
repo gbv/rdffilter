@@ -18,6 +18,7 @@ The package and its command line script ensures that RDF is syntactically valid 
   - [filterQuad](#filterquad)
   - [filterPipeline](#filterpipleine)
   - [iriFilter](#irifilter)
+  - [namespaceFilter](#namespacefilter)
   - [dataFactory](#datafactory)
 - [See Also](#see-also)
 - [License](#license)
@@ -114,6 +115,21 @@ To give an example, the following filter only keeps statements with `rdf:type` p
 iriFilter({
   range: ["predicate"],
   action: iri => iri === "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+})
+~~~
+
+### namespaceFilter
+
+Returns an iriFilter that compares IRIs against a map of IRI namespaces.
+
+~~~js
+namespaceFilter({
+  range: ["subject","predicate"],
+  namespaces: {
+    "http://purl.org/dc/elements/1.1/": "http://purl.org/dc/terms/", // rewrite
+    "http://example": true, // keep
+    "": false // remove everything else (by default everything else is kept)
+  }
 })
 ~~~
 
