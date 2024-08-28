@@ -3,7 +3,7 @@ import fs from "fs"
 import { rdffilter } from "../index.js"
 import { Writable } from "stream"
 import { BlankNode } from "n3"
-import { IRIFilter, dataFactory as RDF } from "../index.js"
+import { iriFilter, dataFactory as RDF } from "../index.js"
 
 import dctFilter from "../modules/dct.js"
 
@@ -57,16 +57,15 @@ describe("filterPipeline", () => {
 
 describe("IRIFilter", () => {
   const tests = {
-    "<x:a> <x:b> <x:c>": {},
-    "<x:a1> <x:b1> <x:c1>": { action: n => RDF.namedNode(n.value+1) },
-    "<x:a> <x:b1> <x:c>": { action: n => RDF.namedNode(n.value+1), range: new Set(["predicate"]) },
+    "<x:a> <x:b> <x:c> .\n": {},
+    "<x:a1> <x:b1> <x:c1> .\n": { action: iri => RDF.namedNode(iri+1) },
+    "<x:a> <x:b1> <x:c> .\n": { action: iri => RDF.namedNode(iri+1), range: ["predicate"] },
+    "": { action: () => false },
   }
   for (let expect in tests) {
-    it(expect, done => {
-      const rf = new IRIFilter(tests[expect])
-      //const filter = rf.filterQuad.bind(rf)
-      const filter = rf
-      testResult("./test/abc.ttl", { filter }, expect + " .\n", done)
+    it(expect.replace(/\n/,""), done => {
+      const filter = iriFilter(tests[expect])
+      testResult("./test/abc.ttl", { filter }, expect, done)
     })
   }
 })

@@ -15,7 +15,7 @@ export class RDFFilterTransformer extends Transform {
   _transform(quad, _, callback) {        
     this.stats.quads++
           
-    var result = this.filter.call(this.filter,quad)
+    var result = this.filter(quad)
     if (result === true) {
       this.keep(quad)
     } else if (Array.isArray(result)) {

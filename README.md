@@ -14,6 +14,7 @@ The package and its command line script ensures that RDF is syntactically valid 
 - [Usage](#usage)
 - [API](#api)
 - [Filters](#filters)
+  - [iriFilter](#irifilter)
 - [See Also](#see-also)
 - [License](#license)
 
@@ -87,14 +88,6 @@ The following functions can be exported:
 
 ...
 
-### applFilter
-
-...
-
-### filterPipeline
-
-...
-
 ### dataFactory
 
 Implements the [RDF/JS DataFactory interface](https://rdf.js.org/data-model-spec/#datafactory-interface) to create RDF Terms:
@@ -109,16 +102,25 @@ const triple = RDF.triple(
 )
 ~~~
 
-### IRIFilter
 
-Instances of this class are callable filter functions that pass NamedNode terms (IRIs) to an `action` method to either return a modified term or a non-truthy value to not modify the term. Option `range` can be set to a set telling which terms to check (`new Set(["subject","predicate","object"])` by default).
+### applyFilter
+
+...
+
+### filterPipeline
+
+...
+
+### iriFilter
+
+Returns a filter function that checks IRIs in quads or triples with an `action` method each. The method either returns a modified IRI or a boolean value whether to keep the term. Option `range` can be set to an array of which terms to check (`["subject","predicate","object"]` by default).
 
 To give an example, the following filter only keeps statements with `rdf:type` predicate.
 
 ~~~js
-new IRIFilter({
-  range: new Set(["predicate"]),
-  action: term => term.value === "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+iriFilter({
+  range: ["predicate"],
+  action: iri => iri === "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
 })
 ~~~
 
