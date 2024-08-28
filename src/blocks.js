@@ -1,10 +1,13 @@
 // always returns an array
-export function applyFilter(filter, item) {
-  const result = filter(item)
-  if (result === true) {return [item]}
-  if (typeof result === "object") {return [result]}
-  if (Array.isArray(result)) {return result.map(r => r === true ? item : r)}
-  return []
+export function filterQuad(filter, quad) {
+  const result = filter(quad) || []
+  if (result === true) {
+    return [true]
+  } else if (Array.isArray(result)) {
+    return result
+  } else {
+    return [result]
+  }
 }
 
 // pipe multiple filters after another
@@ -14,7 +17,8 @@ export function filterPipeline(filters) {
     for (let f of filters) {
       const res = []
       for (let item of set) {
-        res.push(...applyFilter(f, item))
+        const quads = filterQuad(f, item).map(q => q === true ? item : q)
+        res.push(...quads)
       }
       set = res
     }

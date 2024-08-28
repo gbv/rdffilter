@@ -17,7 +17,7 @@ export const formats = {
 
 // TODO: try https://www.npmjs.com/package/async-transforms for parallel?
 
-export function rdffilter(input, output, options = {}) {
+export function rdffilter(input, options = {}) {
   if (!("kept" in options)) {options.kept = true}
   if (!("added" in options)) {options.added = true}
   if (!("removed" in options)) {options.removed = false}
@@ -55,5 +55,4 @@ export function rdffilter(input, output, options = {}) {
   return input.pipe(parser)
     .pipe(streamFilter)
     .pipe(writer)
-    .pipe(output)
 }

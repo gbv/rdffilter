@@ -102,7 +102,7 @@ program
 
     filter = await Promise.all(filter.map(m => filterFromModule(m)))
 
-    rdffilter(input, output, { quads, to, filter, stats, added, kept, removed })
+    rdffilter(input, { quads, to, filter, stats, added, kept, removed }).pipe(output)
   })
 
 program.parse(process.argv)

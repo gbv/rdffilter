@@ -14,7 +14,11 @@ The package and its command line script ensures that RDF is syntactically valid 
 - [Usage](#usage)
 - [API](#api)
 - [Filters](#filters)
+  - [rdffilter](#rdffilter)
+  - [filterQuad](#filterquad)
+  - [filterPipeline](#filterpipleine)
   - [iriFilter](#irifilter)
+  - [dataFactory](#datafactory)
 - [See Also](#see-also)
 - [License](#license)
 
@@ -86,7 +90,32 @@ The following functions can be exported:
 
 ### rdffilter
 
-...
+Filter RDF triples. Exact calling syntax is not fixed yet.
+
+### filterQuad
+
+Apply a filter function to an RDF quad/triple and always return a (possibly empty) array of quad/triple objects or `true` values. To transform the result into an array of quad/triple objects use this:
+
+~~~js
+const quads = filterQuad(filter, quad).map(q => q === true ? quad : q)
+~~~
+
+### filterPipeline
+
+Create a filter function from a list of filters. The result of first filter is passed to the second and so on.
+
+### iriFilter
+
+Returns a filter function that checks IRIs in quads or triples with an `action` method each. The method either returns a modified IRI or a boolean value whether to keep the term. Option `range` can be set to an array of which terms to check (`["subject","predicate","object"]` by default).
+
+To give an example, the following filter only keeps statements with `rdf:type` predicate.
+
+~~~js
+iriFilter({
+  range: ["predicate"],
+  action: iri => iri === "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+})
+~~~
 
 ### dataFactory
 
@@ -102,27 +131,6 @@ const triple = RDF.triple(
 )
 ~~~
 
-
-### applyFilter
-
-...
-
-### filterPipeline
-
-...
-
-### iriFilter
-
-Returns a filter function that checks IRIs in quads or triples with an `action` method each. The method either returns a modified IRI or a boolean value whether to keep the term. Option `range` can be set to an array of which terms to check (`["subject","predicate","object"]` by default).
-
-To give an example, the following filter only keeps statements with `rdf:type` predicate.
-
-~~~js
-iriFilter({
-  range: ["predicate"],
-  action: iri => iri === "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
-})
-~~~
 
 ## Filters
 
