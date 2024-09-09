@@ -5,7 +5,7 @@
 [![Test](https://github.com/gbv/rdffilter/actions/workflows/test.yml/badge.svg)](https://github.com/gbv/rdffilter/actions/workflows/test.yml)
 [![NPM Version](http://img.shields.io/npm/v/rdffilter.svg?style=flat)](https://www.npmjs.org/package/rdffilter)
 
-The package and its command line script ensures that RDF is syntactically valid and can be used to filter out, rewrite or expand individual triples.
+The package and its command line script ensures that RDF is syntactically valid and can be used to filter out, rewrite or expand individual triples or quads.
 
 ## Table of Contents
 
@@ -29,7 +29,7 @@ The package and its command line script ensures that RDF is syntactically valid 
 
 — Tim Berners-Lee ([1998](https://www.w3.org/DesignIssues/RDFnot.html))
 
-The best part of RDF, next to IRIs, is triples can always be combined. The worst part of RDF, next to blank nodes, is triples can always be combined. In practice you better exclude some kinds of triples. 
+The best part of RDF, next to IRIs, is statements can always be combined. The worst part of RDF, next to blank nodes, is statements can always be combined. In practice you better exclude or modify some statements. 
 
 Despite the availability of complicated technologies to ensure data quality, such as [Web Ontology Language (OWL)](https://www.w3.org/TR/owl2-overview/) and [Shapes Constraint Language (SHACL)](https://www.w3.org/TR/shacl/), people keep creating malformed, invalid, faulty or nonsensical RDF data in good faith. Contrary to popular belief, RDF data is not more "semantic" than scribbled shopping lists, Excel sheets, or any other kind of data -- unless the data follows some assumptions. This tool can help to check some of these assumptions and to modify RDF data to better meet defined expections.
 
@@ -53,14 +53,14 @@ npm i rdffilter
 
 ## Usage
 
-By default the command line client reads RDF Turtle syntax and writes
-N-Triples. With option `--quads` or if input file extension is `.nq` or
-`.trig`, the formats are changed to TriG and N-Quads, respectively. The output
-format can also be set explicitly with option `--to` for Turtle
-(`ttl`/`turtle`), N-Triples (`nt`), N-Quads (`nq`) or TriG (`trig`). RDF
-extension RDF-star is not supported.
+By default the command line client reads any of N-Triples, N-Quads, Turtle, and
+TriG syntax and it writes N-Triples. With option `--quads` or if input file
+extension is `.nq` or `.trig`, the formats are changed to TriG and N-Quads,
+respectively. The output format can also be set explicitly with option `--to`
+for Turtle (`ttl`/`turtle`), N-Triples (`nt`), N-Quads (`nq`) or TriG (`trig`).
+RDF extension RDF-star is not supported.
 
-To enable triple filtering use option `-f` to specify [filters](#filters).
+To enable filtering use option `-f` to specify [filters](#filters).
 
 ~~~
 Usage: rdffilter [options] [input]
@@ -91,11 +91,11 @@ The following functions can be exported:
 
 ### rdffilter
 
-Filter RDF triples. Exact calling syntax is not fixed yet.
+Filter RDF triples or quads. Exact calling syntax is not fixed yet.
 
 ### filterQuad
 
-Apply a filter function to an RDF quad/triple and always return a (possibly empty) array of quad/triple objects or `true` values. To transform the result into an array of quad/triple objects use this:
+Apply a filter function to an RDF triple or quad and always return a (possibly empty) array of triple/quad objects or `true` values. To transform the result into an array of triple/quad objects use this:
 
 ~~~js
 const quads = filterQuad(filter, quad).map(q => q === true ? quad : q)
@@ -160,14 +160,14 @@ export default ({subject, predicate, object}) => {
 
 Filter modules can either be referenced by filename or by name of a file in the [modules directory](modules) of this package. Please have a look at the latter for examples of filter modules. A filter function can return:
 
-- `true` to keep the triple
+- `true` to keep the triple or quad
 
-- an object or an array of objects to replace the triple.  To add triples *in
-  addition to* the original triple, return an array with the original triple *as
-  first element* (otherwise the original triple will not be counted as kept but as
-  removed and added).
+- an object or an array of objects to replace the triple/quad.  To add
+  triples/quads *in addition to* the original, return an array with the
+  original triple/quad *as first element* (otherwise the original will not
+  be counted as kept but as removed and as added).
 
-- any falsy value (`false`, `undefined`, `null`) to filter out the triple
+- any falsy value (`false`, `undefined`, `null`) to filter out the triple or quad
 
 Returned objects are expected to conform to RDF/JS Quad Interface. This package uses [N3](https://www.npmjs.com/package/n3) so you can use its factory methods. A slightly more complex example below:
 
@@ -187,7 +187,7 @@ export default ({ subject, predicate, object }) => {
 
 ## See Also
 
-This tool does not check for duplicated triples. Duplicated triples are irrelevant *in theory* but problematic *in practice* because you likely end up with wrong triple counts. The best way to remove duplicate triples is to process NTriples with standard command line tools:
+This tool does not check for duplicated triples or quads. Such duplicates are irrelevant *in theory* but problematic *in practice* because you likely end up with wrong counts. The best way to remove duplicates is to process N-Triples / N-Quads with standard command line tools:
 
 ~~~sh
 rdffilter ... | sort | uniq
